@@ -41,3 +41,27 @@ docker run -d \
 -e SPRING_PROFILES_ACTIVE=testdata \
 catalog-service
 ```
+
+### To create the docker image using buildpacks and publish
+
+```
+./gradlew bootBuildImage \
+    --imageName ghcr.io/<your_github_username>/catalog-service \
+    --publishImage \
+    -PregistryUrl=ghcr.io \
+    -PregistryUsername=<your_github_username> \
+    -PregistryToken=<your_github_token>
+```
+
+### To run the image from buildpacks
+
+```
+docker run -d \
+--name catalog-service \
+--net catalog-network \
+-p 9001:9001 \
+-e SPRING_DATASOURCE_URL=jdbc:postgresql://polar-postgres:5432/polardb_catalog \
+-e SPRING_PROFILES_ACTIVE=testdata \
+--platform linux/amd64 \
+catalog-service
+```

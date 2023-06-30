@@ -30,6 +30,25 @@ bootRun {
     systemProperty 'spring.profiles.active', 'testdata'
 }
 
+bootBuildImage {
+    imageName = "${project.name}"
+    environment = ["BP_JVM_VERSION" : "17.*"]
+
+    docker {
+        publishRegistry {
+            username = project.findProperty("registryUsername")
+            password = project.findProperty("registryToken")
+            url = project.findProperty("registryUrl")
+        }
+    }
+}
+
+
+// For M1 Mac
+tasks.named("bootBuildImage") {
+    builder = "dashaun/builder:tiny"
+}
+
 dependencies {
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
