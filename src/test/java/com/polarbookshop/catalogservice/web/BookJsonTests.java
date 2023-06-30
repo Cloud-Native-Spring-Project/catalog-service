@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 
+import java.time.Instant;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JsonTest
@@ -17,7 +19,8 @@ class BookJsonTests {
 
     @Test
     void testSerialize() throws Exception {
-        var book = Book.of("1234567890", "Title", "Author", 9.90);
+        var now = Instant.now();
+        var book = new Book(394L, "1234567890", "Title", "Author", 9.90, "Polarsophia", now, now, 21);
         JsonContent<Book> jsonContent = json.write(book);
 
         assertThat(jsonContent).extractingJsonPathNumberValue("@.id")
@@ -40,16 +43,22 @@ class BookJsonTests {
 
     @Test
     void testDeserialize() throws Exception {
+        var instant = Instant.parse("2023-07-01T00:00:00.000000Z");
         var content = """
-      {
-        "isbn": "1234567890",
-        "title": "Title",
-        "author": "Author",
-        "price": 9.90
-      }
-      """;
+                {
+                    "id": 394,
+                    "isbn": "1234567890",
+                    "title": "Title",
+                    "author": "Author",
+                    "price": 9.90,
+                    "publisher": "Polarsophia",
+                    "createdDate": "2023-07-01T00:00:00.000000Z",
+                    "lastModifiedDate": "2023-07-01T00:00:00.000000Z",
+                    "version": 21
+                }
+                """;
         assertThat(json.parse(content))
                 .usingRecursiveComparison()
-                .isEqualTo(Book.of("1234567890", "Title", "Author", 9.90));
+                .isEqualTo(new Book(394L, "1234567890", "Title", "Author", 9.90, "Polarsophia", instant, instant, 21));
     }
 }
