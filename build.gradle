@@ -43,7 +43,6 @@ bootBuildImage {
     }
 }
 
-
 // For M1 Mac
 tasks.named("bootBuildImage") {
     builder = "dashaun/builder:tiny"
