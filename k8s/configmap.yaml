@@ -17,3 +17,6 @@ data:
                     resourceserver:
                         jwt:
                             issuer-uri: http://polar-keycloak/realms/PolarBookshop
+        logging:
+            level:
+                root: debug

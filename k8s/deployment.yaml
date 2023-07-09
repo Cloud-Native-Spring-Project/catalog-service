@@ -39,7 +39,7 @@ spec:
                             port: 9001
                             path: /actuator/health/readiness
                         initialDelaySeconds: 5
-                        periodSeconds: 20
+                        periodSeconds: 15
                     ports:
                         -   containerPort: 9001
                     env:
