@@ -7,7 +7,6 @@ resources:
 
 configMapGenerator:
     -   name: catalog-config
-        namespace: polar
         files:
             - application.yaml
         options:
