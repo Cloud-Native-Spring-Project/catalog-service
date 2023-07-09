@@ -1,10 +1,17 @@
 name: Acceptance Stage
 on:
     workflow_run:
-        workflows: ['Commit Stage']
-        types: [completed]
+        workflows: [ 'Commit Stage' ]
+        types: [ completed ]
         branches: main
 concurrency: acceptance
+
+env:
+    OWNER: cloud-native-spring-project
+    REGISTRY: ghcr.io
+    APP_REPO: catalog-service
+    DEPLOY_REPO: polar-deployment
+    VERSION: ${{ github.sha }}
 
 jobs:
     functional:
@@ -12,16 +19,32 @@ jobs:
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-22.04
         steps:
-            - run: echo "Running functional acceptance tests"
+            -   run: echo "Running functional acceptance tests"
     performance:
         name: Performance Tests
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-22.04
         steps:
-            - run: echo "Running performance tests"
+            -   run: echo "Running performance tests"
     security:
         name: Security Tests
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-22.04
         steps:
-            - run: echo "Running security tests"
+            -   run: echo "Running security tests"
+    deliver:
+        name: Deliver release candidate to production
+        needs: [ functional, performance, security ]
+        runs-on: ubuntu-22.04
+        steps:
+            -   name: Deliver application to production
+                uses: peter-evans/repository-dispatch@v2
+                with:
+                    token: ${{ secrets.DISPATCH_TOKEN }}
+                    repository: ${{ env.OWNER }}/${{ env.DEPLOY_REPO }}
+                    event-type: app_delivery
+                    client-payload: '{
+            "app_image": "${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.APP_REPO }}",
+            "app_name": "${{ env.APP_REPO }}",
+            "app_version": "${{ env.VERSION }}"
+          }'
