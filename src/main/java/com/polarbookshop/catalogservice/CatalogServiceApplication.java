@@ -9,6 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 public class CatalogServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CatalogServiceApplication.class, args);
+        SpringApplication springApplication = new SpringApplication(CatalogServiceApplication.class);
+        springApplication.addListeners(new PropertiesLogger());
+        springApplication.run(args);
     }
 }
